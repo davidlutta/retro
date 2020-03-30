@@ -1,6 +1,9 @@
 package com.davidlutta.retro;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.davidlutta.retro.adapters.OnPostListener;
 import com.davidlutta.retro.adapters.PostAdapter;
 import com.davidlutta.retro.model.Post;
+import com.davidlutta.retro.networking.NetworkChangeReceiver;
 import com.davidlutta.retro.viewmodels.PostsViewModel;
 
 import butterknife.BindView;
@@ -24,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements OnPostListener {
     PostAdapter postAdapter;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
-
+    private BroadcastReceiver mNetworkReceiver;
     PostsViewModel postsViewModel;
     private String TAG = "com.davidlutta.retro.MainActivity";
 
@@ -33,9 +37,13 @@ public class MainActivity extends AppCompatActivity implements OnPostListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        setUpBroadcastReceiver();
         postsViewModel = ViewModelProviders.of(this).get(PostsViewModel.class);
         setUpRecyclerView();
+        subscribeObservers();
+    }
+
+    private void subscribeObservers() {
         postsViewModel.getPagedListLiveData().observe(this, new Observer<PagedList<Post>>() {
             @Override
             public void onChanged(PagedList<Post> posts) {
@@ -44,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements OnPostListener {
         });
     }
 
+    private void setUpBroadcastReceiver() {
+        mNetworkReceiver = new NetworkChangeReceiver();
+        registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
     private void setUpRecyclerView() {
         if (postAdapter == null) {
             postAdapter = new PostAdapter(this);
@@ -62,5 +74,19 @@ public class MainActivity extends AppCompatActivity implements OnPostListener {
         String id = post.getId().toString();
         intent.putExtra("postID", id);
         startActivity(intent);
+    }
+
+    protected void unregisterNetworkChanges() {
+        try {
+            unregisterReceiver(mNetworkReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterNetworkChanges();
     }
 }

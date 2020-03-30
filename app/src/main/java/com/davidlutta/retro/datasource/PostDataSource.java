@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
 
 import com.davidlutta.retro.Api.JsonApi;
-import com.davidlutta.retro.Api.networking.RetrofitService;
+import com.davidlutta.retro.networking.RetrofitService;
 import com.davidlutta.retro.model.Post;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class PostDataSource extends PageKeyedDataSource<Long, Post> {
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 List<Post> postsList = response.body();
                 if (postsList != null) {
-                    callback.onResult(postsList, null, page + 1);
+                    callback.onResult(postsList, null, page);
                 } else {
                     Log.d(TAG, "onResponse: NO POSTS");
                 }
@@ -55,6 +55,7 @@ public class PostDataSource extends PageKeyedDataSource<Long, Post> {
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Long, Post> callback) {
         final long page = params.key;
+        System.out.println("----------------- PAGE NUMBER IS : " + page + " -------------------------");
         Call<List<Post>> data = jsonApi.getPostList(page);
         data.enqueue(new Callback<List<Post>>() {
             @SuppressLint("LongLogTag")

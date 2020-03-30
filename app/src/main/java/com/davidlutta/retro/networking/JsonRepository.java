@@ -1,4 +1,4 @@
-package com.davidlutta.retro.Api.networking;
+package com.davidlutta.retro.networking;
 
 import androidx.lifecycle.MutableLiveData;
 
