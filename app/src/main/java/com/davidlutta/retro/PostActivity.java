@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.davidlutta.retro.model.Post;
+import com.davidlutta.retro.util.SharedPref;
 import com.davidlutta.retro.viewmodels.PostViewModel;
 
 import butterknife.BindView;
@@ -20,16 +21,25 @@ public class PostActivity extends AppCompatActivity {
     @BindView(R.id.postBodyTextView)
     TextView postBodyTextView;
     private PostViewModel mPostViewModel;
-
+    SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setAppearance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
         mPostViewModel = ViewModelProviders.of(this).get(PostViewModel.class);
         subscribeObservers();
     }
+
+    private void setAppearance() {
+        sharedPref = new SharedPref(this);
+        if (sharedPref.getNightModeState()) {
+            setTheme(R.style.DarkTheme);
+        } else setTheme(R.style.AppTheme);
+    }
+
 
     private void subscribeObservers() {
         if (getIntent().hasExtra("postID")) {
