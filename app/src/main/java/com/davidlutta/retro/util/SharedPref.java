@@ -2,6 +2,7 @@ package com.davidlutta.retro.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcelable;
 
 public class SharedPref {
     SharedPreferences preferences;
@@ -20,4 +21,5 @@ public class SharedPref {
         editor.putBoolean("NightMode", state);
         editor.commit();
     }
+
 }
