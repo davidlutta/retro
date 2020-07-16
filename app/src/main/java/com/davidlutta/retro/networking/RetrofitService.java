@@ -1,6 +1,8 @@
 package com.davidlutta.retro.networking;
 
+import com.davidlutta.retro.Api.JsonApi;
 import com.davidlutta.retro.GlobalApplication;
+import com.davidlutta.retro.util.LiveDataCallAdapterFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,9 +26,13 @@ public class RetrofitService {
 
     private static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://jsonplaceholder.typicode.com/posts/")
+            .addCallAdapterFactory(new LiveDataCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient())
+//            .client(okHttpClient())
             .build();
+
+    private static JsonApi jsonApi = retrofit.create(JsonApi.class);
+
 
     public static synchronized RetrofitService getInstance() {
         if (instance == null) {
@@ -36,6 +42,10 @@ public class RetrofitService {
     }
     public static <S> S createService(Class<S> serviceClass) {
         return retrofit.create(serviceClass);
+    }
+
+    public static JsonApi getJsonApi() {
+        return jsonApi;
     }
 
     private static OkHttpClient okHttpClient() {

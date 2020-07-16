@@ -2,13 +2,16 @@ package com.davidlutta.retro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.davidlutta.retro.model.Post;
+import com.davidlutta.retro.util.Resource;
 import com.davidlutta.retro.util.SharedPref;
 import com.davidlutta.retro.viewmodels.PostViewModel;
 
@@ -16,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PostActivity extends AppCompatActivity {
+    private static final String TAG = "PostActivity";
     @BindView(R.id.postTitleTextView)
     TextView postTitleTextView;
     @BindView(R.id.postBodyTextView)
@@ -49,10 +53,34 @@ public class PostActivity extends AppCompatActivity {
             if (bundle != null) {
                 postId = bundle.getString("postID");
             }
-            mPostViewModel.getPost(postId).observe(this, new Observer<Post>() {
+            /*mPostViewModel.getPost(postId).observe(this, new Observer<Post>() {
                 @Override
                 public void onChanged(Post post) {
                     setPostProps(post);
+                }
+            });*/
+            mPostViewModel.getPost(postId).observe(this, new Observer<Resource<Post>>() {
+                @Override
+                public void onChanged(Resource<Post> postResource) {
+                    if (postResource != null) {
+                        if (postResource.data != null) {
+                            switch (postResource.status) {
+                                case LOADING:
+                                    Toast.makeText(PostActivity.this, "Loading...", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case SUCCESS:
+                                    Log.d(TAG, "onChanged: Cache Refreshed");
+                                    setPostProps(postResource.data);
+                                    break;
+                                case ERROR:
+                                    Log.d(TAG, "onChanged: ERROR: Title" + postResource.data.getTitle());
+                                    Log.d(TAG, "onChanged: ERROR: message" + postResource.message);
+                                    Toast.makeText(PostActivity.this, postResource.message, Toast.LENGTH_SHORT).show();
+                                    setPostProps(postResource.data);
+                                    break;
+                            }
+                        }
+                    }
                 }
             });
         }

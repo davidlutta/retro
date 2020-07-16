@@ -11,7 +11,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         ServiceManager serviceManager = new ServiceManager(context);
         if (!serviceManager.isNetworkAvailable()) {
-            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No Internet Connection\nFetching data from cache", Toast.LENGTH_LONG).show();
         }
     }
 }

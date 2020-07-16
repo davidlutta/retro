@@ -1,5 +1,7 @@
 package com.davidlutta.retro.Api;
 
+import androidx.lifecycle.LiveData;
+
 import com.davidlutta.retro.model.Post;
 
 import java.util.List;
@@ -13,6 +15,12 @@ public interface JsonApi {
     @GET("/posts")
     Call<List<Post>> getPostList(@Query("userId") long userId);
 
+    @GET("/posts")
+    LiveData<ApiResponse<List<Post>>> getPostList();
+
+    /*@GET("/posts/{id}")
+    Call<Post> getPost(@Path("id") String postId)*/;
+
     @GET("/posts/{id}")
-    Call<Post> getPost(@Path("id") String postId);
+    LiveData<ApiResponse<Post>> getPost(@Path("id") String postId);
 }

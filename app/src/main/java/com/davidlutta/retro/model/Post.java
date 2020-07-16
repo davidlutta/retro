@@ -6,24 +6,33 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+@Entity(tableName = "posts")
 public class Post implements Serializable, Parcelable
 {
 
     @SerializedName("userId")
     @Expose
     private Integer userId;
+
+    @PrimaryKey
+    @NonNull
     @SerializedName("id")
     @Expose
     private Integer id;
+
+
     @SerializedName("title")
     @Expose
     private String title;
+
     @SerializedName("body")
     @Expose
     private String body;
@@ -50,6 +59,13 @@ public class Post implements Serializable, Parcelable
         this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.title = ((String) in.readValue((String.class.getClassLoader())));
         this.body = ((String) in.readValue((String.class.getClassLoader())));
+    }
+
+    public Post(Integer userId, @NonNull Integer id, String title, String body) {
+        this.userId = userId;
+        this.id = id;
+        this.title = title;
+        this.body = body;
     }
 
     public Post() {
